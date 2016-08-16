@@ -1,0 +1,1 @@
+  5  0  *  *  * root /var/www/html/RICS/batch/daily_getdata.sh >> /var/www/html/RICS/batch/daily_getdata.log

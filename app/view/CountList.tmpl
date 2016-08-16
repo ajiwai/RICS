@@ -1,0 +1,227 @@
+<?php
+
+require APP_ROOT_DIR . '/helper/ViewHelper.php';
+
+//プルダウンリスト用HTML生成
+$selectSiteCateHtml = "<select name='search_sel_site_cate' id ='search_sel_site_cate'>\n<option id='0'></option>\n";
+$selectSiteCateHtml .= ViewHelper::getSelectHtml('ID', 'SITE_CATE_NM', $mSiteList, $searchSelSiteCateId);
+$selectSiteGroupHtml = "<select name='search_sel_site_group' id ='search_sel_site_group'>\n<option id='0'></option>#";
+$selectSiteGroupHtml .= ViewHelper::getSelectHtml('SITE_GROUP_NM', 'SITE_GROUP_NM', $mSiteGroupList, $searchSelSiteGroupName);
+
+//結果TABLE用HTML生成（HEAD部)
+$tableThHtml = '';
+$trStyle = 'background-color:skyblue;text-align:center;';
+$thStyle = 'background-color:lightgreen;';
+$tableThHtml .= "<tr style='".$trStyle."'><th style='".$thStyle."'>No</th><th style='".$thStyle."'>Site</th><th style='".$thStyle."'>Category</th>";
+for ($i = 0; $i < count($monthList); $i++){
+    $yyyymm = $monthList[$i];
+    $tableThHtml .= "<th width=".$thDateStyle." style='".$thDateStyle."'>".$yyyymm['YYYYMM'].'</th>';
+}
+$wkSiteNm = '';
+$wkCateNm = '';
+$wkAvgCount = -1;
+$idx = 0;
+$dataMap = array();
+$totalMap = array();
+$dataList = array();
+$countIndex = 0;
+$maxCount = 0;
+for($j = 0; $j < count($monthList); $j++){
+    $totalMap += array($monthList[$j]['YYYYMM']=> 0);
+}
+
+//並び替えるため、取得データを多次元連想配列に格納
+for ($i = 0; $i < count($tCountList); $i++){
+    $countData = $tCountList[$i];
+    $siteNm = $countData['SITE_NM'];
+    $cateNm = $countData['CATEGORY_NM'];
+    $yyyymm = $countData['YYYYMM'];
+    $avgCount = $countData['AVG'];
+    if( $siteNm != $wkSiteNm || $cateNm != $wkCateNm){
+        if( $wkSiteNm != '' || $wkCateNm != ''){
+            $dataMap += array('siteNm'=> $wkSiteNm);
+            $dataMap += array('cateNm'=> $wkCateNm);
+            for($j = $countIndex; $j < count($monthList); $j++){
+                $ymd = $monthList[$j]['YYYYMM'];
+                if(!isset($dataMap[$ymd])){
+                    $dataMap += array($ymd=> -1);
+                }
+            }
+            $dataMap += array('maxCount'=> $maxCount);
+            $countIndex = 0;
+            $maxCount = 0;
+            array_push($dataList,$dataMap);
+            $idx++;
+            $dataMap = array();
+        }
+    }
+    
+    for($j = $countIndex; $j < count($monthList); $j++){
+        if($monthList[$j]['YYYYMM'] == $yyyymm){
+//echo $countIndex. '/' . $j . '/' . $monthList[$j]['YYYYMM']. '/' . $yyyymm. '/' . $avgCount.'<br>';
+            $dataMap += array($yyyymm=> $avgCount);
+            $totalMap[$yyyymm] += $avgCount;
+            break;
+        }else{
+            $dataMap += array($monthList[$j]['YYYYMM']=> -1);
+        }
+    }
+    if($avgCount > $maxCount){
+        $maxCount = $avgCount;
+    }
+    $wkAvgCount = $avgCount;
+    $countIndex = $j + 1;
+    $wkSiteNm = $siteNm;
+    $wkCateNm = $cateNm;
+
+}
+if(count($dataList) > 0 ){
+    $dataMap += array('siteNm'=> $wkSiteNm);
+    $dataMap += array('cateNm'=> $wkCateNm);
+    $dataMap += array('maxCount'=> $maxCount);
+    array_push($dataList,$dataMap);
+}
+
+//並び替え
+foreach ((array) $dataList as $key => $value) {
+    $sort[$key] = $value['maxCount'];
+}
+array_multisort($sort, SORT_DESC, $dataList);
+//print_r($dataList);
+//print_r($totalMap);
+
+$tableThHtml .= '</tr>';
+$tableThHtml2 = str_replace('th', 'td', $tableThHtml);
+$wkSiteNm = '';
+$wkCateNm = '';
+$wkAvgCount = -1;
+$countIndex = 0;
+$blockLineCount = 0;
+$rowNo = 0;
+$tdDefaultStyle = 'color:black;background-color:white';
+
+//結果TABLE用HTML生成（BODY部)
+$htmlTable .= "<tr style='color:black;background-color:orange;text-align:right'><td colspan=3>合計</td>" ;
+for($j = 0; $j < count($monthList); $j++){
+    $htmlTable .= '<td>' . number_format($totalMap[$monthList[$j]['YYYYMM']]) . '</td>';
+}
+$htmlTable .= '</tr>';
+if($chkSort == 'checked'){
+    for ($i = 0; $i < count($dataList); $i++){
+        if($chkDisplay == 'checked' && $blockLineCount >= 20){
+           $htmlTable .= $tableThHtml2;
+           $blockLineCount = 0;
+        }
+        $countData = $dataList[$i];
+        $siteNm = $countData['siteNm'];
+        $cateNm = $countData['cateNm'];
+        $tdStyle = 'color:black;background-color:skyblue';
+        $htmlTable .= '<tr>';
+        $rowNo++;
+        $htmlTable .= "<td style='".$tdStyle."'>".$rowNo.'</td>';
+        $htmlTable .= "<td style='".$tdStyle."'>".$siteNm.'</td>';
+        $htmlTable .= "<td style='".$tdStyle."'>".$cateNm.'</td>';
+        $tdStyle = 'color:black;background-color:white';
+        for($j = 0; $j < count($monthList); $j++){
+            $avgCount = $countData[$monthList[$j]['YYYYMM']];
+            $tdStyle = ViewHelper::getCountTdStyle($wkAvgCount, $avgCount);
+            $htmlTable .= "<td style='".$tdStyle."'>".number_format($avgCount).'</td>';
+            $wkAvgCount = $avgCount;
+        }
+        $htmlTable .= '</tr>';
+        $countIndex = $j + 1;
+        $wkAvgCount = -1;
+        $blockLineCount++;
+    }
+}else{
+    //結果TABLE用HTML生成（BODY部)
+    for ($i = 0; $i < count($tCountList); $i++){
+        $countData = $tCountList[$i];
+        $siteNm = $countData['SITE_NM'];
+        $cateNm = $countData['CATEGORY_NM'];
+        $yyyymm = $countData['YYYYMM'];
+        $avgCount = $countData['AVG'];
+    //    $date = strftime('%Y/%m/%d', strtotime($date . '-0 day'));
+    //echo $siteNm .'/'. $cateNm .'/'. $avgCount . '<br>';
+        if( $siteNm != $wkSiteNm || $cateNm != $wkCateNm){
+            if( $wkSiteNm != '' || $wkCateNm != ''){
+                $htmlTable .= '</tr>';
+                if($chkDisplay == 'checked' && $blockLineCount >= 20){
+                   $htmlTable .= $tableThHtml2;
+                    $blockLineCount = 0;
+                }
+            }
+            $tdStyle = 'color:black;background-color:skyblue';
+            $htmlTable .= '<tr>';
+            $rowNo++;
+            $htmlTable .= "<td style='".$tdStyle."'>".$rowNo.'</td>';
+            $htmlTable .= "<td style='".$tdStyle."'>".$siteNm.'</td>';
+            $htmlTable .= "<td style='".$tdStyle."'>".$cateNm.'</td>';
+            $tdStyle = 'color:black;background-color:white;text-align:right';
+            $tdStyle = ViewHelper::getCountTdStyle($wkAvgCount, $avgCount);
+            for($j = 0; $j < count($monthList); $j++){
+                if($monthList[$j]['YYYYMM'] == $yyyymm){
+                    $htmlTable .= "<td style='".$tdStyle."'>".number_format($avgCount).'</td>';
+                    break;
+                }else{
+                    $htmlTable .= "<td style='".$tdDefaultStyle."'>-</td>";
+                }
+            }
+            $countIndex = $j + 1;
+            $wkAvgCount = $avgCount;
+            $blockLineCount++;
+        }else{
+            for($j = $countIndex; $j < count($monthList); $j++){
+            //echo $countIndex. '/' . $j . '/' .$monthList[$j]['YYYYMM']. '/' . $yyyymm. '/' . $avgCount.'<br>';
+                if($monthList[$j]['YYYYMM'] == $yyyymm){
+                    $tdStyle = ViewHelper::getCountTdStyle($wkAvgCount, $avgCount);
+                    $htmlTable .= "<td style='".$tdStyle."'>".number_format($avgCount).'</td>';
+                    break;
+                }else{
+                    $htmlTable .= "<td style='".$tdDefaultStyle."'>-</td>";
+                }
+            }
+            $wkAvgCount = $avgCount;
+            $countIndex++;
+        }
+        $wkSiteNm = $siteNm;
+        $wkCateNm = $cateNm;
+
+    }
+}
+if(count($tCountList) == 0 ){
+    $htmlTable = '<p>該当データなし</p>';
+}else{
+    if($chkSort == 'checked'){
+        $htmlTable .= '</table>';
+    }else{
+        $htmlTable .= '</tr></table>';
+    }
+    $htmlTable = "<table border='1' style='border-collapse: collapse;table-layout: fixed;'>" . $tableThHtml . $htmlTable;
+}
+
+?>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>recruit count list</title>
+</head>
+<body>
+<form action="./?p=CountList" method="post">
+<a href="./?p=DailyCountList">日別件数リスト</a>　<a href="./?p=FileList">ファイルリスト</a><br>
+    サイト：<?php echo $selectSiteGroupHtml ?>
+    サイト - カテゴリ：<?php echo $selectSiteCateHtml ?><br>
+    <input type="checkbox" name="chk_sort" id="chk_sort" <?php echo $chkSort ?>>：最大件数順表示　
+    <input type="checkbox" name="chk_display" id="chk_display" <?php echo $chkDisplay ?>>：拡張表示　
+    <!--拡張表示2：<input type="checkbox" name="chk_display2" id="chk_display2" <?php echo $chkDisplay2 ?>>-->
+    キーワード：<input type="text" name="search_word" id="search_word" value="<?php echo $searchFreeWord ?>">
+    <input type="button" value="クリア" onclick="document.getElementById('search_word').value='';">
+    <input type="submit" value="絞り込み"><br>
+</form>
+<?php
+
+echo $htmlTable;
+?>
+</body>
+</html>

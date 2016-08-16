@@ -1,0 +1,52 @@
+# SQL
+SELECT SITE_NM,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
+WHERE SITE_NM = 'mynavi' AND CATEGORY_ID = 8
+GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
+
+SELECT SITE_NM,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
+GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
+
+SELECT SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
+WHERE SITE_NM = 'en-japan'
+GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
+
+SELECT SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
+WHERE (SITE_NM LIKE '%セールスエンジニア%' OR CATEGORY_NM LIKE '%セールスエンジニア%')
+GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
+
+# バッチ単体実行
+/var/www/html/RICS/batch/grep_files.sh 20150101
+/var/www/html/RICS/app/index.php 2 20150101
+
+# cd /var/www/html/RICS
+# ↓単体実行用コマンド（rikunabi）
+# cat ../output/rikunabi/01/20160418.html | grep -e "\/lst\_jb.*\/\".*>.*（[0-9]*件）"
+# cat ../output/rikunabi/grep_tmp2.txt | sed "s/^.*href=\"\/\([^/]*\)\/\([^/]*\)[^>]*>\([^<]*\).*（\([0-9]*\)件）.*$/\1\t\2\t\3\t\4/g"
+
+# ↓単体実行用コマンド（en-japan）
+# cat output/en-japan/grep_tmp4.txt | sed "s/^.*href=\"\/\([^/]*\)\/\">\([^<]*\).*【\([0-9]*\)件】.*$/\1\t\2\t\3/g"
+# cat ../output/en-japan/grep_tmp2.txt | sed "s/\(/【/g"
+
+# cat ../output/mynavi/01/20160114.html | grep -e "value=.*href=\".*（[0-9]*）"
+# cat ../output/mynavi/grep_tmp2.txt | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*（\([0-9]*\)）.*$/\1\t\t\2\t\3/g"
+# cat ../output/mynavi/01/20160114.html | grep -e "value=.*href=\".*（[0-9]*）" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*（\([0-9]*\)）.*$/\1\t\t\2\t\3/g"
+# cat ../output/mynavi/01/20160114.html | sed 's/\n/\r/g' > ../output/mynavi/grep_tmp.txt
+
+#mynavi単体実行用
+#cat ../output/mynavi/01/20160418.html | grep -e "value=.*href=\".*（[0-9]*）" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*（\([0-9]*\)）.*$/\1\t\t\2\t\3/g" > ../output/mynavi/grep_tmp.txt
+
+#type単体実行用
+#cat ../output/type/01/20160418.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*（[0-9]*件）" > ../output/type/grep_tmp.txt
+#cat ../output/type/grep_tmp.txt | sed "s/^ *<a href=\"\([^\"]*\).*$/\1/g" | sed "s/^ *\([^<]*\).*（\([0-9]*\)件）.*$/\t\t\1\t\2/g" | sed "s/^--.*$//g"  | sed "s/^.*<p>.*$//g" | sed "/^\s*$/d" > ../output/type/grep_tmp2.txt
+#sed ':loop; N; $!b loop; ;s/\/\n//g' ../output/type/grep_tmp2.txt > ../output/type/grep_tmp3.txt
+#cat ../output/type/grep_tmp3.txt | sed "s/\(\/job-1\/[0-9]*\)\/\(.*\)/\1\t\2/g" > ../output/type/grep_tmp4.txt
+#type(00)単体実行用
+#cat ../output/type/20160418.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*（[0-9]*件）" > ../output/type/grep_tmp.txt
+#cat ../output/type/grep_tmp.txt | sed "s/^.*<a href=\"\([^\"]*\)\">\([^<]*\).*（\([0-9]*\)件）.*$/\1\t\t\2\t\3/g" | sed "s/^--.*$//g" | sed "s/^.*<ul.*$//g" | sed "s/^.*<div.*$//g" | sed "/^\s*$/d" > ../output/type/grep_tmp2.txt
+
+#JobStreet(Sg)単体実行用
+#cat "../output/JobStreet(Sg)/01/20160114.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "../output/JobStreet(Sg)/grep_tmp.txt"
+#cat "../output/JobStreet(Sg)/grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "../output/JobStreet(Sg)/grep_tmp2.txt"
+#cat "../output/JobStreet(Sg)/grep_tmp2.txt" | sed -e "s/(/【/g" | sed -e "s/)/】/g" > "../output/JobStreet(Sg)/grep_tmp3.txt"
+#cat "../output/JobStreet(Sg)/grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">【\([0-9]*\)】.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "../output/JobStreet(Sg)/grep_result.txt"
+#sed ':loop; N; $!b loop; ;s/^\r//g' "../output/JobStreet(Sg)/grep_tmp4.txt" > "../output/JobStreet(Sg)/grep_result.txt"

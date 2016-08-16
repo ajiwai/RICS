@@ -1,0 +1,110 @@
+<?php
+
+require APP_ROOT_DIR . '/helper/ViewHelper.php';
+
+//プルダウンリスト用HTML生成
+$selectSiteCateHtml = "<select name='search_sel_site_cate' id ='search_sel_site_cate'>\n<option id='0'></option>\n";
+$selectSiteCateHtml .= ViewHelper::getSelectHtml('SITE_NM_CATE_ID', 'SITE_CATE_NM', $mSiteList, $searchSelSiteCateId);
+
+//結果TABLE用HTML生成（HEAD部)
+$tableThHtml = '';
+$trStyle = 'background-color:skyblue;text-align:center;';
+$thStyle = 'background-color:lightgreen;';
+$tableThHtml .= "<tr style='".$trStyle."'><th style='".$thStyle."'>No</th><th style='".$thStyle."'>Site</th><th style='".$thStyle."'>Category</th>";
+for ($i = 0; $i < count($monthList); $i++){
+    $yyyymm = $monthList[$i];
+    $tableThHtml .= "<th width=".$thDateStyle." style='".$thDateStyle."'>".$yyyymm['YYYYMM'].'</th>';
+}
+$tableThHtml .= '</tr>\n';
+$tableThHtml2 = str_replace('th', 'td', $tableThHtml);
+$wkSiteNm = '';
+$wkCateNm = '';
+$wkAvgCount = -1;
+$countIndex = 0;
+$blockLineCount = 0;
+$rowNo = 0;
+$tdDefaultStyle = 'color:black;background-color:white';
+
+//結果TABLE用HTML生成（BODY部)
+for ($i = 0; $i < count($tCountList); $i++){
+    $countData = $tCountList[$i];
+    $siteNm = $countData['SITE_NM'];
+    $cateNm = $countData['CATEGORY_NM'];
+    $yyyymm = $countData['YYYYMM'];
+    $avgCount = $countData['AVG'];
+//    $date = strftime('%Y/%m/%d', strtotime($date . '-0 day'));
+//echo $siteNm .'/'. $cateNm .'/'. $avgCount . '<br>\n';
+    if( $siteNm != $wkSiteNm || $cateNm != $wkCateNm){
+        if( $wkSiteNm != '' || $wkCateNm != ''){
+            $htmlTable .= '</tr>';
+            if($chkDisplay == 'checked' && $blockLineCount >= 20){
+               $htmlTable .= $tableThHtml2;
+                $blockLineCount = 0;
+            }
+        }
+        $tdStyle = 'color:black;background-color:skyblue';
+        $htmlTable .= '<tr>';
+        $rowNo++;
+        $htmlTable .= "<td style='".$tdStyle."'>".$rowNo.'</td>';
+        $htmlTable .= "<td style='".$tdStyle."'>".$siteNm.'</td>';
+        $htmlTable .= "<td style='".$tdStyle."'>".$cateNm.'</td>';
+        $tdStyle = 'color:black;background-color:white';
+        $tdStyle = ViewHelper::getCountTdStyle($wkAvgCount, $avgCount);
+        for($j = 0; $j < count($monthList); $j++){
+            if($monthList[$j]['YYYYMM'] == $yyyymm){
+                $htmlTable .= "<td style='".$tdStyle."'>".$avgCount.'</td>';
+                break;
+            }else{
+                $htmlTable .= "<td style='".$tdDefaultStyle."'>-</td>";
+            }
+        }
+        $countIndex = $j + 1;
+        $wkAvgCount = $avgCount;
+        $blockLineCount++;
+    }else{
+        for($j = $countIndex; $j < count($monthList); $j++){
+        //echo $countIndex. '/' . $j . '/' .$monthList[$j]['YYYYMM']. '/' . $yyyymm. '/' . $avgCount.'<br>';
+            if($monthList[$j]['YYYYMM'] == $yyyymm){
+                $tdStyle = ViewHelper::getCountTdStyle($wkAvgCount, $avgCount);
+                $htmlTable .= "<td style='".$tdStyle."'>".$avgCount.'</td>';
+                break;
+            }else{
+                $htmlTable .= "<td style='".$tdDefaultStyle."'>-</td>";
+            }
+        }
+        $wkAvgCount = $avgCount;
+        $countIndex++;
+    }
+    $wkSiteNm = $siteNm;
+    $wkCateNm = $cateNm;
+
+}
+if(count($tCountList) == 0 ){
+    $htmlTable = '<p>該当データなし</p>';
+}else{
+    $htmlTable .= '</tr></table>';
+    $htmlTable = "<table border='1' style='border-collapse: collapse;table-layout: fixed;'>\n" . $tableThHtml . $htmlTable;
+}
+
+?>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>recruit count list</title>
+</head>
+<body>
+<form action="./?p=CountList" method="post">
+    サイト - カテゴリ：<?php echo $selectSiteCateHtml ?><br>
+    拡張表示：<input type="checkbox" name="chk_display" id="chk_display" <?php echo $chkDisplay ?>>
+    拡張表示2：<input type="checkbox" name="chk_display2" id="chk_display2" <?php echo $chkDisplay2 ?>>
+    キーワード：<input type="text" name="search_word" id="search_word" value="<?php echo $searchFreeWord ?>">
+    <input type="button" value="クリア" onclick="document.getElementById('search_word').value='';">
+    <input type="submit" value="絞り込み"><br>
+</form>
+<?php
+
+echo $htmlTable;
+?>
+</body>
+</html>
