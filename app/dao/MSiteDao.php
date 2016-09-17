@@ -51,7 +51,7 @@ class MSiteDao extends AbstractDao {
     public function getSiteCateList() {
         try{
 
-            $stmt = $this->dbh->prepare("SELECT ID,CATEGORY_ID,CONCAT(ID,'_',CATEGORY_ID) AS SITE_CATE_ID,CONCAT(SITE_NM,' - ',SITE_INFO) AS SITE_CATE_NM,CONCAT(SITE_SNM,'_',CATEGORY_ID) AS SITE_NM_CATE_ID FROM " . $this->tableName . ' WHERE DELETE_FLG = FALSE ORDER BY ID;');
+            $stmt = $this->dbh->prepare("SELECT ID,CATEGORY_ID,CONCAT(SITE_SNM,'_',CATEGORY_ID) AS SITE_CATE_ID,CONCAT(SITE_SNM,' - ',SITE_INFO) AS SITE_CATE_NM,CONCAT(SITE_SNM,'_',CATEGORY_ID) AS SITE_NM_CATE_ID FROM " . $this->tableName . ' WHERE DELETE_FLG = FALSE ORDER BY ID;');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
             $stmt->execute();

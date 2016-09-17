@@ -24,10 +24,10 @@ rm -rf mynavi_bk
 rm -rf type_bk
 
 # UTF8‚É•ÏŠ·
-cd $root_path
-./batch/convert_utf8.sh $root_path"/output/rikunabi"
-./batch/convert_utf8.sh $root_path"/output/mynavi"
-./batch/convert_utf8.sh $root_path"/output/type"
+#cd $root_path
+#./batch/convert_utf8.sh $root_path"/output/rikunabi"
+#./batch/convert_utf8.sh $root_path"/output/mynavi"
+#./batch/convert_utf8.sh $root_path"/output/type"
 
 # grep•ÏŠ·(bash)
 cd $root_path"/batch"

@@ -1,10 +1,9 @@
 <?php
 
 require APP_ROOT_DIR . '/helper/ViewHelper.php';
-
 //プルダウンリスト用HTML生成
 $selectSiteCateHtml = "<select name='search_sel_site_cate' id ='search_sel_site_cate'>\n<option id='0'></option>\n";
-$selectSiteCateHtml .= ViewHelper::getSelectHtml('ID', 'SITE_CATE_NM', $mSiteList, $searchSelSiteCateId);
+$selectSiteCateHtml .= ViewHelper::getSelectHtml('SITE_CATE_ID', 'SITE_CATE_NM', $mSiteList, $searchSelSiteCateId);
 $selectSiteGroupHtml = "<select name='search_sel_site_group' id ='search_sel_site_group'>\n<option id='0'></option>#";
 $selectSiteGroupHtml .= ViewHelper::getSelectHtml('SITE_GROUP_NM', 'SITE_GROUP_NM', $mSiteGroupList, $searchSelSiteGroupName);
 

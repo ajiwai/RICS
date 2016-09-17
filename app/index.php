@@ -23,6 +23,11 @@ if(!isset($_SERVER['REQUEST_URI'])){
             }else{
                 $fromDate = date('Ymd');
             }
+            if(isset($argv[3])){
+                $paramSite = $argv[3];
+            }else{
+                $paramSite = '';
+            }
             require APP_ROOT_DIR . DS . 'task' . DS . 'AggregateTask.php';
         }else{
             echo 'argument is bad!\n';

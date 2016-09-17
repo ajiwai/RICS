@@ -33,7 +33,7 @@ abstract class AbstractDao{
             return $dataList;
          
         } catch(PDOException $e){
-            echo 'Select failed: ' . $e->getMessage().'\n';
+            echo 'Select failed: ' . $e->getMessage()."\n";
         }
     }
 
@@ -78,7 +78,7 @@ abstract class AbstractDao{
                 $i++;
             }
         } catch(PDOException $e){
-            echo 'Desc failed: ' . $e->getMessage().'\n';
+            echo 'Desc failed: ' . $e->getMessage()."\n";
         }
         return $columnList;
     }
@@ -114,8 +114,8 @@ abstract class AbstractDao{
             $stmt = $this->dbh->prepare($sql);
             $stmt->execute();
         } catch (PDOException $e) {
-            echo 'Insert failed: ' . $e->getMessage().'\n';
-            echo 'Insert SQL=' . $sql .'\n';
+            echo 'Insert failed: ' . $e->getMessage()."\n";
+            echo 'Insert SQL=' . $sql ."\n";
             return false;
         }
         return true;

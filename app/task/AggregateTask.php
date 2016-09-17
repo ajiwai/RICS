@@ -29,9 +29,10 @@ $failedCnt = 0;
 $skipCnt = 0;
 for($i = 0; $i < count($wJobOffereList); $i++){
     $isSkip = false;
-    $data = explode('\t', $wJobOffereList[$i]);
+    $data = explode("\t", $wJobOffereList[$i]);
     $site = $data[0];
-    $date = $data[1];
+//echo var_dump($data)."\n";
+    $date = isset($data[1]) ? $data[1] : '19010101';
     if(isset($data[6])){
         $count = str_replace('\n', '' ,$data[6]);
     }else{
@@ -42,14 +43,14 @@ for($i = 0; $i < count($wJobOffereList); $i++){
     }else{
         $isSkip = true;
     }
-    $id1 = str_replace('\n', '' ,$data[3]);
+    $id1 = isset($data[3]) ? str_replace('\n', '' ,$data[3]) : '';
     if($id1 == '' && ($site == 'rikunabi' || $site == 'en-japan' || $site == 'mynavi')){
         $isSkip = true;
     }
-    if($date < $fromDate){
+    if($date < $fromDate || $site != $paramSite){
         $isSkip = true;
     }
-//echo $data[6].'/'.$count.'/'.$id1.'/';
+//echo $date.'/'.$count.'/'.$id1.'|';
     if(!$isSkip){
         if($data[0] == 'type' && $cateNm == ''){
             $cateNm = str_replace('\n', '' ,$data[6]);

@@ -23,7 +23,7 @@ class WJobOfferDao extends AbstractDao {
 
             if ($searchSelSiteGroupName != '') {
                 if ($searchSelSiteGroupName == 'JapanSite') {
-                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?,?,?,?) ' : ' AND SITE_NM = ? ';
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?,?,?,?) ' : ' AND SITE_NM IN (?,?,?,?) ';
                     $param[$i] =  array('Value'=>'rikunabi', 'Type'=>PDO::PARAM_STR );
                     $i++;
                     $param[$i] =  array('Value'=>'en-japan', 'Type'=>PDO::PARAM_STR );
@@ -31,6 +31,18 @@ class WJobOfferDao extends AbstractDao {
                     $param[$i] =  array('Value'=>'mynavi', 'Type'=>PDO::PARAM_STR );
                     $i++;
                     $param[$i] =  array('Value'=>'type', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                }else if ($searchSelSiteGroupName == 'en-japan(Area)') {
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?) AND CATEGORY_ID = ? ' : ' AND SITE_NM IN (?) AND CATEGORY_ID = ? ';
+                    $param[$i] =  array('Value'=>'en-japan', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                    $param[$i] =  array('Value'=>'12', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                }else if ($searchSelSiteGroupName == 'JobStreet(Area)') {
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM LIKE ? AND CATEGORY_ID = ? ' : ' AND SITE_NM LIKE ? AND CATEGORY_ID = ? ';
+                    $param[$i] =  array('Value'=>'%JobStreet%', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                    $param[$i] =  array('Value'=>'03', 'Type'=>PDO::PARAM_STR );
                     $i++;
                 } else {
                     $where .= ($where == '' ) ? ' WHERE SITE_NM LIKE ? ' : ' AND SITE_NM = ? ';
@@ -81,8 +93,8 @@ class WJobOfferDao extends AbstractDao {
             $param = array();
 
             if ($searchSelSiteGroupName != '') {
-                if ($searchSelSiteGroupName == '日本サイト') {
-                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?,?,?,?) ' : ' AND SITE_NM = ? ';
+                if ($searchSelSiteGroupName == 'JapanSite') {
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?,?,?,?) ' : ' AND SITE_NM IN (?,?,?,?) ';
                     $param[$i] =  array('Value'=>'rikunabi', 'Type'=>PDO::PARAM_STR );
                     $i++;
                     $param[$i] =  array('Value'=>'en-japan', 'Type'=>PDO::PARAM_STR );
@@ -90,6 +102,18 @@ class WJobOfferDao extends AbstractDao {
                     $param[$i] =  array('Value'=>'mynavi', 'Type'=>PDO::PARAM_STR );
                     $i++;
                     $param[$i] =  array('Value'=>'type', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                }else if ($searchSelSiteGroupName == 'en-japan(Area)') {
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM IN (?) AND CATEGORY_ID = ? ' : ' AND SITE_NM IN (?) AND CATEGORY_ID = ? ';
+                    $param[$i] =  array('Value'=>'en-japan', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                    $param[$i] =  array('Value'=>'12', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                }else if ($searchSelSiteGroupName == 'JobStreet(Area)') {
+                    $where .= ($where == '' ) ? ' WHERE SITE_NM LIKE ? AND CATEGORY_ID = ? ' : ' AND SITE_NM LIKE ? AND CATEGORY_ID = ? ';
+                    $param[$i] =  array('Value'=>'%JobStreet%', 'Type'=>PDO::PARAM_STR );
+                    $i++;
+                    $param[$i] =  array('Value'=>'03', 'Type'=>PDO::PARAM_STR );
                     $i++;
                 } else {
                     $where .= ($where == '' ) ? ' WHERE SITE_NM LIKE ? ' : ' AND SITE_NM = ? ';
