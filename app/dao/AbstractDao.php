@@ -16,10 +16,14 @@ abstract class AbstractDao{
         return $this->columnList;
     }
 
-    public function getAllData() {
+    public function getAllData($isDeleteFlg　= true) {
         try{
-
-            $stmt = $this->dbh->prepare('SELECT * FROM ' . $this->tableName . ' WHERE DELETE_FLG = FALSE;');
+            if($isDeleteFlg){
+                $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE DELETE_FLG = FALSE;';
+            }else{
+                $sql = 'SELECT * FROM ' . $this->tableName;
+            }
+            $stmt = $this->dbh->prepare($sql);
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
             $stmt->execute();

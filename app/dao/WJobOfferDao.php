@@ -127,6 +127,9 @@ class WJobOfferDao extends AbstractDao {
                 $i++;
             }
             $stmt = $this->dbh->prepare('SELECT SITE_NM,CATEGORY_ID,CATEGORY_NM,DATE,COUNT FROM ' . $this->tableName . $where . ' ORDER BY SITE_NM,CATEGORY_ID,DATE');
+            //$sql = 'SELECT J.SITE_NM,J.CATEGORY_ID,J.CATEGORY_NM,J.DATE,J.COUNT,S.URL FROM ' . $this->tableName . ' J,M_SITE S';
+            //$sql .= '$where . ' AND S.SITE_SNM = J.SITE_NM ORDER BY J.SITE_NM,J.CATEGORY_ID,DATE';
+            //$stmt = $this->dbh->prepare($sql);
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             return parent::getDataByCondLast($stmt, $param);
          

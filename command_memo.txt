@@ -10,43 +10,174 @@ SELECT SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) 
 WHERE SITE_NM = 'en-japan'
 GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
 
-SELECT SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
-WHERE (SITE_NM LIKE '%ÉZÅ[ÉãÉXÉGÉìÉWÉjÉA%' OR CATEGORY_NM LIKE '%ÉZÅ[ÉãÉXÉGÉìÉWÉjÉA%')
-GROUP BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,ID1,ID2,CATEGORY_NM,DATE_FORMAT(DATE, '%Y%m');
+SELECT SITE_NM,DATE_FORMAT(DATE, '%Y%m') AS YYYYMM,COUNT(*) AS COUNT,FORMAT(AVG(COUNT),0) AS AVG from W_JOB_OFFER 
+GROUP BY SITE_NM,DATE_FORMAT(DATE, '%Y%m') ORDER BY SITE_NM,DATE_FORMAT(DATE, '%Y%m');
 
-# ÉoÉbÉ`íPëÃé¿çs
-/var/www/html/RICS/batch/grep_files.sh 20150101
-/var/www/html/RICS/app/index.php 2 20150101
+SELECT SITE_NM,DATE,COUNT(*) AS COUNT from W_JOB_OFFER
+WHERE DATE > '20160512'
+GROUP BY SITE_NM,DATE ORDER BY SITE_NM,DATE;
 
-# cd /var/www/html/RICS
-# Å´íPëÃé¿çsópÉRÉ}ÉìÉhÅirikunabiÅj
-# cat ../output/rikunabi/01/20160418.html | grep -e "\/lst\_jb.*\/\".*>.*Åi[0-9]*åèÅj"
-# cat ../output/rikunabi/grep_tmp2.txt | sed "s/^.*href=\"\/\([^/]*\)\/\([^/]*\)[^>]*>\([^<]*\).*Åi\([0-9]*\)åèÅj.*$/\1\t\2\t\3\t\4/g"
+SELECT * from W_JOB_OFFER WHERE DATE= '20160914' AND (SITE_NM = 'en-japan' OR SITE_NM LIKE 'Job%');
 
-# Å´íPëÃé¿çsópÉRÉ}ÉìÉhÅien-japanÅj
-# cat output/en-japan/grep_tmp4.txt | sed "s/^.*href=\"\/\([^/]*\)\/\">\([^<]*\).*Åy\([0-9]*\)åèÅz.*$/\1\t\2\t\3/g"
-# cat ../output/en-japan/grep_tmp2.txt | sed "s/\(/Åy/g"
+# *** backup for other table ***
+CREATE TABLE W_JOB_OFFER_bk (
+DATE DATE NOT NULL ,
+SITE_NM VARCHAR(20) NOT NULL ,
+CATEGORY_ID VARCHAR(2) NOT NULL ,
+ID1 VARCHAR(45) NOT NULL ,
+ID2 VARCHAR(45) NOT NULL ,
+CATEGORY_NM VARCHAR(100)  ,
+COUNT INT(8)  ,
 
-# cat ../output/mynavi/01/20160114.html | grep -e "value=.*href=\".*Åi[0-9]*Åj"
-# cat ../output/mynavi/grep_tmp2.txt | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Åi\([0-9]*\)Åj.*$/\1\t\t\2\t\3/g"
-# cat ../output/mynavi/01/20160114.html | grep -e "value=.*href=\".*Åi[0-9]*Åj" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Åi\([0-9]*\)Åj.*$/\1\t\t\2\t\3/g"
-# cat ../output/mynavi/01/20160114.html | sed 's/\n/\r/g' > ../output/mynavi/grep_tmp.txt
+  PRIMARY KEY (DATE,SITE_NM,CATEGORY_ID,ID1,ID2,CATEGORY_NM)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT 'Ê±Ç‰∫∫ÊÉÖÂ†±„ÉØ„Éº„ÇØ„ÉÜ„Éº„Éñ„É´2';
 
-#mynaviíPëÃé¿çsóp
-#cat ../output/mynavi/01/20160418.html | grep -e "value=.*href=\".*Åi[0-9]*Åj" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Åi\([0-9]*\)Åj.*$/\1\t\t\2\t\3/g" > ../output/mynavi/grep_tmp.txt
+INSERT INTO W_JOB_OFFER_bk SELECT *  FROM W_JOB_OFFER;
+INSERT INTO W_JOB_OFFER SELECT *  FROM W_JOB_OFFER_bk WHERE DATE < '20160513';
 
-#typeíPëÃé¿çsóp
-#cat ../output/type/01/20160418.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*Åi[0-9]*åèÅj" > ../output/type/grep_tmp.txt
-#cat ../output/type/grep_tmp.txt | sed "s/^ *<a href=\"\([^\"]*\).*$/\1/g" | sed "s/^ *\([^<]*\).*Åi\([0-9]*\)åèÅj.*$/\t\t\1\t\2/g" | sed "s/^--.*$//g"  | sed "s/^.*<p>.*$//g" | sed "/^\s*$/d" > ../output/type/grep_tmp2.txt
-#sed ':loop; N; $!b loop; ;s/\/\n//g' ../output/type/grep_tmp2.txt > ../output/type/grep_tmp3.txt
-#cat ../output/type/grep_tmp3.txt | sed "s/\(\/job-1\/[0-9]*\)\/\(.*\)/\1\t\2/g" > ../output/type/grep_tmp4.txt
-#type(00)íPëÃé¿çsóp
-#cat ../output/type/20160418.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*Åi[0-9]*åèÅj" > ../output/type/grep_tmp.txt
-#cat ../output/type/grep_tmp.txt | sed "s/^.*<a href=\"\([^\"]*\)\">\([^<]*\).*Åi\([0-9]*\)åèÅj.*$/\1\t\t\2\t\3/g" | sed "s/^--.*$//g" | sed "s/^.*<ul.*$//g" | sed "s/^.*<div.*$//g" | sed "/^\s*$/d" > ../output/type/grep_tmp2.txt
 
-#JobStreet(Sg)íPëÃé¿çsóp
-#cat "../output/JobStreet(Sg)/01/20160114.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "../output/JobStreet(Sg)/grep_tmp.txt"
-#cat "../output/JobStreet(Sg)/grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "../output/JobStreet(Sg)/grep_tmp2.txt"
-#cat "../output/JobStreet(Sg)/grep_tmp2.txt" | sed -e "s/(/Åy/g" | sed -e "s/)/Åz/g" > "../output/JobStreet(Sg)/grep_tmp3.txt"
-#cat "../output/JobStreet(Sg)/grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">Åy\([0-9]*\)Åz.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "../output/JobStreet(Sg)/grep_result.txt"
-#sed ':loop; N; $!b loop; ;s/^\r//g' "../output/JobStreet(Sg)/grep_tmp4.txt" > "../output/JobStreet(Sg)/grep_result.txt"
+# *** unit test for convert to tsv *** 
+/var/www/html/RICS/batch/grep_files.sh 20150513
+# *** unit test for aggregate to db *** 
+/usr/bin/php /var/www/html/RICS/app/index.php 2 20150513
+
+# *** unit test for "rikunabi" *** 
+cd /var/www/html/RICS/output/rikunabi
+cat 01/20160527.html | grep -e "\/lst\_jb.*\/\".*>.*Ôºà[0-9]*‰ª∂Ôºâ"
+cat 01/20160712.html | grep -e "\/lst\_jb.*\/\".*>.*Ôºà[0-9]*‰ª∂Ôºâ"
+# cat grep_tmp2.txt | sed "s/^.*href=\"\/\([^/]*\)\/\([^/]*\)[^>]*>\([^<]*\).*Ôºà\([0-9]*\)‰ª∂Ôºâ.*$/\1\t\2\t\3\t\4/g"
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt
+cat grep_result.txt
+
+# *** unit test for "en-japan" *** 
+#cd /var/www/html/RICS/output/en-japan
+# cat grep_tmp4.txt | sed "s/^.*href=\"\/\([^/]*\)\/\">\([^<]*\).*„Äê\([0-9]*\)‰ª∂„Äë.*$/\1\t\2\t\3/g"
+# cat grep_tmp2.txt | sed "s/\(/„Äê/g"
+
+# *** unit test for "mynavi" *** 
+cd /var/www/html/RICS/output/mynavi
+cat 01/20160915.html | grep -e "value=.*href=\".*Ôºà[0-9]*Ôºâ" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Ôºà\([0-9]*\)Ôºâ.*$/\1\t\t\2\t\3/g"
+
+# cat 01/20160718.html | grep -e "value=.*href=\".*Ôºà[0-9]*Ôºâ" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Ôºà\([0-9]*\)Ôºâ.*$/\1\t\t\2\t\3/g" > grep_tmp.txt
+# cat 01/20160714.html | grep -e "value=.*href=\".*Ôºà[0-9]*Ôºâ"
+# cat grep_tmp2.txt | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Ôºà\([0-9]*\)Ôºâ.*$/\1\t\t\2\t\3/g"
+# cat 01/20160114.html | grep -e "value=.*href=\".*Ôºà[0-9]*Ôºâ" | sed "s/^.*href=\"\/list\/\(.*\)\/[^>]*>\([^<]*\)<.*Ôºà\([0-9]*\)Ôºâ.*$/\1\t\t\2\t\3/g"
+# cat 01/20160114.html | sed 's/\n/\r/g' > grep_tmp.txt
+
+# *** unit test for "type" *** 
+cd /var/www/html/RICS/output/type
+cat 01/20160723.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*Ôºà[0-9]*‰ª∂Ôºâ" > grep_tmp.txt
+cat grep_tmp.txt | sed "s/^ *<a href=\"\([^\"]*\).*$/\1/g" | sed "s/^ *\([^<]*\).*Ôºà\([0-9]*\)‰ª∂Ôºâ.*$/\t\t\1\t\2/g" | sed "s/^--.*$//g"  | sed "s/^.*<p>.*$//g" | sed "/^\s*$/d" > grep_tmp2.txt
+sed ':loop; N; $!b loop; ;s/\/\n//g' grep_tmp2.txt > grep_tmp3.txt
+cat grep_tmp3.txt | sed "s/\(\/job-1\/[0-9]*\)\/\(.*\)/\1\t\2/g" > grep_result.txt
+cat grep_result.txt
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt grep_result.txt
+
+# *** unit test for "type(00)" *** 
+#cat 20160418.html | sed "/^\s*$/d" | grep -B 1 -e "class=\"mod-job-num\".*Ôºà[0-9]*‰ª∂Ôºâ" > grep_tmp.txt
+#cat grep_tmp.txt | sed "s/^.*<a href=\"\([^\"]*\)\">\([^<]*\).*Ôºà\([0-9]*\)‰ª∂Ôºâ.*$/\1\t\t\2\t\3/g" | sed "s/^--.*$//g" | sed "s/^.*<ul.*$//g" | sed "s/^.*<div.*$//g" | sed "/^\s*$/d" > grep_tmp2.txt
+
+# *** unit test for "JobStreet(Sg)" *** 
+cd "/var/www/html/RICS/output/JobStreet(Sg)"
+cat "01/20160915.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "grep_tmp.txt"
+cat "grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "grep_tmp2.txt"
+cat "grep_tmp2.txt" | sed -e "s/(/„Äê/g" | sed -e "s/)/„Äë/g" > "grep_tmp3.txt"
+cat "grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">„Äê\([0-9]*\)„Äë.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "grep_result.txt"
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt
+cat grep_result.txt
+rm -f grep_result.txt
+#sed ':loop; N; $!b loop; ;s/^\r//g' "/grep_tmp4.txt" > "grep_result.txt"
+
+# *** unit test for "JobStreet(id)" *** 
+cd "/var/www/html/RICS/output/JobStreet(id)"
+cat "01/20160915.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "grep_tmp.txt"
+cat "grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "grep_tmp2.txt"
+cat "grep_tmp2.txt" | sed -e "s/(/„Äê/g" | sed -e "s/)/„Äë/g" > "grep_tmp3.txt"
+cat "grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">„Äê\([0-9]*\)„Äë.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "grep_result.txt"
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt
+cat grep_result.txt
+rm -f grep_result.txt
+
+# *** unit test for "JobStreet(My)" *** 
+cd "/var/www/html/RICS/output/JobStreet(My)"
+cat "01/20160915.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "grep_tmp.txt"
+cat "grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "grep_tmp2.txt"
+cat "grep_tmp2.txt" | sed -e "s/(/„Äê/g" | sed -e "s/)/„Äë/g" > "grep_tmp3.txt"
+cat "grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">„Äê\([0-9]*\)„Äë.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "grep_result.txt"
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt
+cat grep_result.txt
+rm -f grep_result.txt
+
+# *** unit test for "JobStreet(vn)" *** 
+cd "/var/www/html/RICS/output/JobStreet(vn)"
+cat "01/20160915.html" | grep -e "^.*>[^><]*<\/a> <span class=\"bCnt\">\(\d*\).*$" > "grep_tmp.txt"
+cat "grep_tmp.txt" | sed -e "s/<\/span>/<\/span>\n/g" > "grep_tmp2.txt"
+cat "grep_tmp2.txt" | sed -e "s/(/„Äê/g" | sed -e "s/)/„Äë/g" > "grep_tmp3.txt"
+cat "grep_tmp3.txt" | sed -e "s/^.*<a[^>]*> *\([^<]*\).*<span class=\"bCnt\">„Äê\([0-9]*\)„Äë.*$/\t\t\1\t\2/g" | sed "s/^.*<browse_done.*$//g" > "grep_result.txt"
+rm -f grep_tmp.txt grep_tmp2.txt grep_tmp3.txt
+cat grep_result.txt
+rm -f grep_result.txt
+
+# *** All Delete fro "rikunabi" *** 
+ls -la output/rikunabi/01 | grep .html | xargs --no-run-if-empty rm
+cd /var/www/html/RICS/output/rikunabi/01
+ls | grep .html | xargs rm
+cd ../02
+ls | grep .html | xargs rm
+cd ../03
+ls | grep .html | xargs rm
+cd ../04
+ls | grep .html | xargs rm
+cd ../05
+ls | grep .html | xargs rm
+cd ../06
+ls | grep .html | xargs rm
+cd ../07
+ls | grep .html | xargs rm
+cd ../08
+ls | grep .html | xargs rm
+cd ../09
+ls | grep .html | xargs rm
+
+# *** All Delete fro "mynavi" *** 
+cd /var/www/html/RICS/output/mynavi/01
+ls | grep .html | xargs rm
+cd ../02
+ls | grep .html | xargs rm
+cd ../03
+ls | grep .html | xargs rm
+cd ../04
+ls | grep .html | xargs rm
+cd ../05
+ls | grep .html | xargs rm
+cd ../06
+ls | grep .html | xargs rm
+cd ../07
+ls | grep .html | xargs rm
+cd ../08
+ls | grep .html | xargs rm
+cd ../09
+ls | grep .html | xargs rm
+cd ../10
+ls | grep .html | xargs rm
+cd ../11
+ls | grep .html | xargs rm
+cd ../12
+ls | grep .html | xargs rm
+cd ../13
+ls | grep .html | xargs rm
+cd ../14
+ls | grep .html | xargs rm
+cd ../15
+ls | grep .html | xargs rm
+cd ../16
+ls | grep .html | xargs rm
+
+# Ëß£Âáç
+cd /var/www/html/RICS/output
+tar xfvz rikunabi_bk.tar.gz
+cd /var/www/html/RICS/output
+tar xfvz mynavi_bk.tar.gz
+cd /var/www/html/RICS/output
+tar xfvz type_bk.tar.gz
+

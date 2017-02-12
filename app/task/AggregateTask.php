@@ -47,7 +47,8 @@ for($i = 0; $i < count($wJobOffereList); $i++){
     if($id1 == '' && ($site == 'rikunabi' || $site == 'en-japan' || $site == 'mynavi')){
         $isSkip = true;
     }
-    if($date < $fromDate || $site != $paramSite){
+    //if($date < $fromDate || ($site != $paramSite && $site != '')){
+    if($date < $fromDate){
         $isSkip = true;
     }
 //echo $date.'/'.$count.'/'.$id1.'|';

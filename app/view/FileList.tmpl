@@ -65,7 +65,7 @@ for ($idx = 0; $idx < count($mSiteList); $idx++){
                     }else{
                         $html .= "<tr style='".$style."'><td>".$siteName.'</td><td>'.$cate.' '.$cateName.'</td>';
                     }
-                    $html .= "<td><a href='".$path."'>".$file_name.'</a></td><td>'.round(filesize($path) / 1024, 1) .'KB</td></tr>';
+                    $html .= "<td><a href='".$path."' target='_blank'>".$file_name.'</a></td><td>'.round(filesize($path) / 1024, 1) .'KB</td></tr>';
                     $totalSize += filesize($path); 
                 }
             }
@@ -84,7 +84,7 @@ $html .= '</tr></table>';
 </head>
 <body>
 <form action="./?p=FileList" method="post">
-<a href="./?p=CountList">月別件数リスト</a>　<a href="./?p=DailyCountList">日別件数リスト</a><br>
+<a href="./?p=CountList">月別件数リスト</a>　<a href="./?p=DailyCountList">日別件数リスト</a>　<a href="./?p=SiteList">サイトリスト</a><br>
     サイト：<?php echo $selectSiteHtml ?>
     日付：<input type="text" name="search_date" id="search_date" value="<?php echo $searchDate ?>" size="8" maxlength="8">
     <input type="button" value="クリア" onclick="document.getElementById('search_date').value='';">

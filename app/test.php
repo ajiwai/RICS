@@ -5,7 +5,7 @@ require_once 'init.php';
 if(!isset($argv)){
 	$pageName = $argv[1];
 }else{
-	$pageName = 'DailyCountList';
+	$pageName = 'SiteList';
 }
 require APP_ROOT_DIR . DS . 'controller' . DS . $pageName .CONTROLLER_BASE_NAME;
 $className = $pageName . 'Controller';

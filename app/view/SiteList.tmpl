@@ -1,0 +1,28 @@
+<?php
+$htmlTable = "<table border='1'>";
+$htmlTable .= "<tr><th>サイト名</th><th>サイト略称</th><th>URL</th><th>説明</th><th>説明２</th></tr>\n";
+for ($i = 0; $i < count($mSiteList); $i++){
+    $siteData = $mSiteList[$i];
+    $siteNm = $siteData['SITE_NM'];
+    $siteSnm = $siteData['SITE_SNM'];
+    $url = $siteData['URL'];
+    $siteInfo = $siteData['SITE_INFO'];
+    $siteInfo2 = $siteData['SITE_INFO2'];
+	$htmlTable .= "<tr><td>".$siteNm."</td><td>".$siteSnm."</td><td><a href='".$url."' target='_blank'>".$url."</a></td><td>".$siteInfo."</td><td>".$siteInfo2."</td></tr>\n";
+}
+$htmlTable .= "</table>";
+?>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>サイトリスト</title>
+</head>
+<body>
+<a href="./?p=CountList">月別件数リスト</a>　<a href="./?p=DailyCountList">日別件数リスト</a>　<a href="./?p=FileList">ファイルリスト</a><br>
+<?php
+
+echo $htmlTable;
+?>
+</body>
+</html>

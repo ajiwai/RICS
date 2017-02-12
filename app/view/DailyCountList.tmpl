@@ -15,7 +15,9 @@ for ($i = 0; $i < count($tCountList); $i++){
     $cateNm = $countData['CATEGORY_NM'];
     $date = $countData['DATE'];
     $count = $countData['COUNT'];
+    $url = $countData['URL'];
 	$no = $i + 1;
+    //$html .= '<td>'.$no.'</td><td>'.$date.'</td><td>'.$siteNm .'</td><td>'.$cateNm .'</td><td><a href="'.$url.'">'.$count .'</a></td></tr>';
     $html .= '<td>'.$no.'</td><td>'.$date.'</td><td>'.$siteNm .'</td><td>'.$cateNm .'</td><td>'.$count .'</td></tr>';
 
 }
@@ -30,7 +32,7 @@ $html .= '</tr></table>';
 </head>
 <body>
 <form action="./?p=DailyCountList" method="post">
-<a href="./?p=CountList">月別件数リスト</a>　<a href="./?p=FileList">ファイルリスト</a><br>
+<a href="./?p=CountList">月別件数リスト</a>　<a href="./?p=FileList">ファイルリスト</a>　<a href="./?p=SiteList">サイトリスト</a><br>
 <b><?php echo count($tCountList) ?>件</b>
     サイト：<?php echo $selectSiteGroupHtml ?>
     日付：<input type="text" name="search_date" id="search_date" value="<?php echo $searchDate ?>" size="8" maxlength="8">

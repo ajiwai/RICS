@@ -7,27 +7,6 @@ class MSiteDao extends AbstractDao {
         $this->columnList = self::getTableInfo();
     }
 
-    public function getAllData() {
-        try{
-
-            $stmt = $this->dbh->prepare('SELECT * FROM ' . $this->tableName . ' WHERE DELETE_FLG = FALSE;');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-            $stmt->execute();
-         
-            $dataList= array();
-            while ($row = $stmt->fetch()) {
-                $data = self::getRowData($row);
-                $dataList[] = $data;
-            }
-         
-            return $dataList;
-         
-        } catch(PDOException $e){
-            echo $e->getMessage();
-        }
-    }
-
     public function getSiteNameList() {
         try{
 

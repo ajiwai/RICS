@@ -1,10 +1,10 @@
 #!/bin/bash
 
 root_path="/var/www/html/RICS"
-# î•ñæ“¾(PHP)
+# æƒ…å ±å–å¾—(PHP)
 /usr/bin/php $root_path"/app/index.php" 1 >> $root_path"/batch/daily_getdata.log"
 
-# ƒoƒbƒNƒAƒbƒv
+# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
 cd $root_path"/output"
 mkdir rikunabi_bk
 cp -rp rikunabi/* rikunabi_bk
@@ -13,25 +13,25 @@ cp -rp mynavi/* mynavi_bk
 mkdir type_bk
 cp -rp type/* type_bk
 
-# ƒoƒbƒNƒAƒbƒv‚ğtar&gzip•Û‘¶
+# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’tar&gzipä¿å­˜
 tar cfvz rikunabi_bk.tar.gz rikunabi_bk
 tar cfvz mynavi_bk.tar.gz mynavi_bk
 tar cfvz type_bk.tar.gz type_bk
 
-# ƒoƒbƒNƒAƒbƒvíœ
+# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å‰Šé™¤
 rm -rf rikunabi_bk
 rm -rf mynavi_bk
 rm -rf type_bk
 
-# UTF8‚É•ÏŠ·
+# UTF8ã«å¤‰æ›
 #cd $root_path
 #./batch/convert_utf8.sh $root_path"/output/rikunabi"
 #./batch/convert_utf8.sh $root_path"/output/mynavi"
 #./batch/convert_utf8.sh $root_path"/output/type"
 
-# grep•ÏŠ·(bash)
+# grepå¤‰æ›(bash)
 cd $root_path"/batch"
 ./grep_files.sh
 
-# WŒv(PHP)
-/usr/bin/php $root_path"/app/index.php" 2 >> daily_getdata.log
+# é›†è¨ˆ(PHP)
+/usr/bin/php $root_path/app/index.php 2 >> daily_getdata.log
